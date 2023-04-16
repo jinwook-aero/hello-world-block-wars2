@@ -24,6 +24,7 @@ class Block:
         self.color  = color
         self.width  = self.setting.block.width
         self.height = self.setting.block.height
+        self.radius = np.sqrt(np.square(self.width)+np.square(self.height))
         self.image  = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.image.fill(self.color)
         
@@ -101,6 +102,15 @@ class Block:
         self.theta += self.omega
         self.theta %= 360 
         
+        # Coordinate limit
+        xMin = self.radius
+        xMax = self.setting.screen.width-self.radius
+        yMin = self.height
+        yMax = self.setting.screen.height-self.radius
+        self.x = min(xMax,max(self.x,xMin))
+        self.y = min(yMax,max(self.y,yMin))
+        
+        # Rectangle position
         rect_x = int(self.x)
         rect_y = self.setting.screen.height - int(self.y)
         

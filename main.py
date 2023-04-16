@@ -20,7 +20,7 @@ class BlockWars2:
         
         self.screen = pygame.display.set_mode(
                 (self.setting.screen.width,self.setting.screen.height))
-        pygame.display.set_caption("Block Wars 2: `, 1, 2, 3, 4, W, A, S, D, Space")
+        pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `, 1~4, W, A, S, D, Space")
         
         self.objs = pygame.sprite.Group()
         self._set_game()

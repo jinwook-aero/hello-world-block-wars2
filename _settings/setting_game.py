@@ -14,7 +14,10 @@ class SettingGame:
         # Player 2 red
         self.player_color.append((200,150,150))
         
-        ## Game status flag
+        ## 
+        
+        ## Flags
+        # Game status
         self.is_active = False
 
 
