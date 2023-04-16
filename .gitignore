@@ -1,1 +1,4 @@
+*.pyc
 /__pycache__
+/_blocks/__pycache__
+/_settings/__pycache__

@@ -4,10 +4,11 @@ import time
 import numpy as np
 from pygame.sprite import Sprite
 
-class Block(Sprite):
+#class Block(Sprite):
+class Block:
     """ Class to manage block """
 
-    def __init__(self, cur_game, x=-1, y=-1, theta=90, color=(100,100,100)):
+    def __init__(self, cur_game, x=-1, y=-1, theta=90, color=(100,100,100), n_player=0, n_serial=0):
         # Initialize
         super().__init__()
         self.screen = cur_game.screen
@@ -20,16 +21,19 @@ class Block(Sprite):
         self.theta = float(theta)
         
         # Create rectangle
+        self.color  = color
         self.width  = self.setting.block.width
         self.height = self.setting.block.height
         self.image  = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.image.fill(color)
+        self.image.fill(self.color)
         
         self.image0 = self.image # Reserved original image
         self.rect = self.image.get_rect(center = (int(self.x),self.setting.screen.height-self.y))
         
         # Speed
         self.v     = 0
+        self.vx    = 0
+        self.vy    = 0
         self.omega = 0
         
         # Destiation
@@ -39,11 +43,21 @@ class Block(Sprite):
         # Target
         self.x_target = self.x
         self.y_target = self.y
-                
-        # Select
-        self.is_selectable = True
+        
+        # Is selected
+        if n_player == 0:            
+            self.is_selectable = True
+        else:        
+            self.is_selectable = False
         self.is_selected = False
-
+        
+        # Serial number
+        self.n_player = n_player
+        self.n_serial = n_serial
+        
+        self.text_color = (255, 255, 255)
+        self.font = pygame.font.SysFont(None, 24)
+                
     def update(self):
         # Accel toward destination
         dx = self.x_dest - self.x
@@ -61,13 +75,14 @@ class Block(Sprite):
         if dist>=self.width:
             self.v = min(v0,self.v+v_dot)
             dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
-        elif dist<self.width*3 and self.v>0.1*v0:
-            v_dot2 = -np.square(self.v)/(2*dist)
-            self.v = max(0,self.v+v_dot2)
-            dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
         else:
-            self.v = 0
-            dtheta = 0
+            if self.v>0.2*v0:
+                v_dot2 = -np.square(self.v)/(2*dist)
+                self.v = max(0,self.v+v_dot2)
+                dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
+            else:
+                self.v = 0
+                dtheta = 0
         
         dtheta %= 360            
         if dtheta>=1 and dtheta<=180:
@@ -77,12 +92,12 @@ class Block(Sprite):
         else:
             self.omega = 0
         
-        vx = self.v*np.cos(self.theta*np.pi/180)
-        vy = self.v*np.sin(self.theta*np.pi/180)
+        self.vx = self.v*np.cos(self.theta*np.pi/180)
+        self.vy = self.v*np.sin(self.theta*np.pi/180)
         
         # Coordinate and attitude
-        self.x += vx
-        self.y += vy
+        self.x += self.vx
+        self.y += self.vy
         self.theta += self.omega
         self.theta %= 360 
         
@@ -95,12 +110,23 @@ class Block(Sprite):
         self.rect  = self.image.get_rect(center = (rect_x,rect_y))
         self.screen.blit(self.image, self.rect)
         
+        # Serial number
+        n_serial_str = str(self.n_serial)
+        self.n_serial_image = self.font.render(
+                n_serial_str, True, self.text_color, self.setting.screen.background_color)
+
+        # Display
+        self.n_serial_rect = self.n_serial_image.get_rect()
+        self.n_serial_rect.x = self.rect.x + self.width*1.5
+        self.n_serial_rect.y = self.rect.y - self.height/2
+        
     def draw(self):
         # Screen height
         scr_height = self.setting.screen.height
         
         # Blit the image
         self.screen.blit(self.image, self.rect)
+        self.screen.blit(self.n_serial_image, self.n_serial_rect)
         
         # Circle base
         circleRad = self.width*0.45

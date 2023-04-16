@@ -4,7 +4,8 @@ import time
 import numpy as np
 from pygame.sprite import Sprite
 
-class Turret(Sprite):
+#class Turret(Sprite):
+class Turret:
     """ Class to manage turret """
 
     def __init__(self, cur_game, block, color):
