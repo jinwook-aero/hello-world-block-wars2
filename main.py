@@ -124,7 +124,7 @@ class BlockWars2:
                                 obj.x_dest = obj.x+obj.vx*self.setting.game.frame_per_second*0.5
                                 obj.y_dest = obj.y+obj.vy*self.setting.game.frame_per_second*0.5
                 
-                # Select each
+                # Select/Deselect each
                 if ((event.key == pygame.K_1) or
                     (event.key == pygame.K_2) or
                     (event.key == pygame.K_3) or
@@ -137,10 +137,20 @@ class BlockWars2:
                         n_cur = 3 - 1
                     elif (event.key == pygame.K_4):
                         n_cur = 4 - 1
+                        
+                    # Check if already selected
+                    is_selected_already = False
                     for obj in self.objs.sprites():
                         if obj.is_selectable == True:
                             if obj.n_serial == n_cur:
-                                obj.is_selected = True
+                                if obj.is_selected:
+                                    is_selected_already = True
+                    
+                    # Flip selection at target and delect else
+                    for obj in self.objs.sprites():
+                        if obj.is_selectable == True:
+                            if obj.n_serial == n_cur:
+                                obj.is_selected = not is_selected_already
                             else:
                                 obj.is_selected = False
     
