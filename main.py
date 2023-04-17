@@ -23,14 +23,14 @@ class BlockWars2:
         pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `, 1~4, W, A, S, D, Space")
         
         self.objs = pygame.sprite.Group()
-        self._set_game()
         
         # Start time
         self.clock = pygame.time.Clock()
         self.n_frame = 0
             
     def run_game(self):
-        """Main game loop"""
+        """Main game loop"""    
+        self._set_game()        
         while True:            
             # Update inputs
             self._check_events()
@@ -42,6 +42,7 @@ class BlockWars2:
             self._update_screen()
             
             # Frame rate
+            self.n_frame += 1
             self.clock.tick(self.setting.game.frame_per_second)            
           
     def _set_game(self):

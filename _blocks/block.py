@@ -8,7 +8,7 @@ from pygame.sprite import Sprite
 class Block:
     """ Class to manage block """
 
-    def __init__(self, cur_game, x=-1, y=-1, theta=90, color=(100,100,100), n_player=0, n_serial=0):
+    def __init__(self, cur_game, x, y, theta, color, n_player, n_serial):
         # Initialize
         super().__init__()
         self.screen = cur_game.screen
@@ -24,12 +24,15 @@ class Block:
         self.color  = color
         self.width  = self.setting.block.width
         self.height = self.setting.block.height
-        self.radius = np.sqrt(np.square(self.width)+np.square(self.height))
+        self.radius = np.sqrt(np.square(self.width)+np.square(self.height))/2
         self.image  = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.image.fill(self.color)
         
         self.image0 = self.image # Reserved original image
         self.rect = self.image.get_rect(center = (int(self.x),self.setting.screen.height-self.y))
+        
+        # Health
+        self.health = self.setting.block.health
         
         # Speed
         self.v     = 0
@@ -52,7 +55,8 @@ class Block:
         self.n_player = n_player
         self.n_serial = n_serial
         
-        self.text_color = (255, 255, 255)
+        self.text_serial_color = (255, 255, 255)
+        self.text_health_color = (50, 255, 50)
         self.font = pygame.font.SysFont(None, 24)
                 
     def update(self):
@@ -120,12 +124,21 @@ class Block:
         # [NOTE] Displayed after +1
         n_serial_str = str(self.n_serial+1)
         self.n_serial_image = self.font.render(
-                n_serial_str, True, self.text_color, self.setting.screen.background_color)
+                n_serial_str, True, self.text_serial_color, self.setting.screen.background_color)
+                
+        # health
+        health_str = str(self.health)
+        self.health_image = self.font.render(
+                health_str, True, self.text_health_color, self.setting.screen.background_color)
 
         # Display
         self.n_serial_rect = self.n_serial_image.get_rect()
-        self.n_serial_rect.x = self.rect.x + self.width*1.5
-        self.n_serial_rect.y = self.rect.y - self.height/2
+        self.n_serial_rect.x = self.rect.x - self.width*0.7
+        self.n_serial_rect.y = self.rect.y - self.height*0.5
+        
+        self.health_rect   = self.health_image.get_rect()
+        self.health_rect.x = self.rect.x + self.width*1.5
+        self.health_rect.y = self.rect.y - self.height*0.5
         
     def draw(self):
         # Screen height
@@ -134,9 +147,10 @@ class Block:
         # Blit the image
         self.screen.blit(self.image, self.rect)
         
-        # Serial number only for player
+        # Serial number and life only for player
         if self.n_player == 0:
             self.screen.blit(self.n_serial_image, self.n_serial_rect)
+            self.screen.blit(self.health_image, self.health_rect)
         
         # Circle base
         circleRad = self.width*0.45
@@ -145,7 +159,7 @@ class Block:
         
         if self.is_selected:            
             # Circle
-            circleRad = self.width
+            circleRad = self.radius*1.2
             circlePos = (self.x,scr_height-self.y)
             pygame.draw.circle(self.screen, (0, 255, 0), circlePos, circleRad, 1)
             

@@ -17,7 +17,7 @@ class BlockTurret(Sprite):
         block_color = color
         turrent_color = [int(color[0]*0.7), int(color[1]*0.7), int(color[2]*0.7)]
         self.block  = Block(cur_game, x, y, theta, color, n_player, n_serial)
-        self.turret = Turret(cur_game, self.block, turrent_color)
+        self.turret = Turret(cur_game, self.block, turrent_color, n_player, n_serial)
                 
         # Coordinates
         self.rect = self.block.rect
@@ -54,6 +54,9 @@ class BlockTurret(Sprite):
         # Serial number
         self.n_player = n_player
         self.n_serial = n_serial
+        
+        # Fire
+        self.is_firing = False
 
     def update(self):
         # Nearest target
@@ -62,7 +65,7 @@ class BlockTurret(Sprite):
         y_list = []
         n_indx = 0
         for obj in self.game.objs.sprites():
-            if (obj.n_player != self.n_player):
+            if (obj.n_player >= 0) and (obj.n_player != self.n_player):
                 n_indx += 1
                 d_cur = np.sqrt(np.square(obj.x-self.x)+np.square(obj.y-self.y))
                 d_list.append(d_cur)
@@ -70,8 +73,9 @@ class BlockTurret(Sprite):
                 y_list.append(obj.y)
         
         # Acquire target
-        self.turret.x_target = self.block.x
-        self.turret.y_target = self.block.y
+        self.turret.x_target = self.block.x + np.cos(self.block.theta*np.pi/180)*self.block.radius*0.1
+        self.turret.y_target = self.block.y + np.sin(self.block.theta*np.pi/180)*self.block.radius*0.1
+        self.is_firing = False
         if len(d_list)>0:
             n_min = np.argmin(d_list)
             d_min = d_list[n_min]
@@ -80,6 +84,8 @@ class BlockTurret(Sprite):
             if d_min <= self.R_recog:
                 self.turret.x_target = x_min
                 self.turret.y_target = y_min
+                if (d_min <= self.R_range) and (self.turret.is_aligned):
+                    self.is_firing = True
         
         # Element update
         self.block.update()
@@ -95,6 +101,9 @@ class BlockTurret(Sprite):
         # Selected
         self.block.is_selected  = self.is_selected
         self.turret.is_selected = self.is_selected
+        
+        # Firing
+        self.turret.is_firing = self.is_firing
         
         # Coordinates
         self.block.x_dest = self.x_dest
