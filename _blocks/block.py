@@ -40,12 +40,8 @@ class Block:
         # Destiation
         self.x_dest = self.x
         self.y_dest = self.y
-
-        # Target
-        self.x_target = self.x
-        self.y_target = self.y
         
-        # Is selected
+        # Select
         if n_player == 0:            
             self.is_selectable = True
         else:        
@@ -121,7 +117,8 @@ class Block:
         self.screen.blit(self.image, self.rect)
         
         # Serial number
-        n_serial_str = str(self.n_serial)
+        # [NOTE] Displayed after +1
+        n_serial_str = str(self.n_serial+1)
         self.n_serial_image = self.font.render(
                 n_serial_str, True, self.text_color, self.setting.screen.background_color)
 
@@ -136,7 +133,10 @@ class Block:
         
         # Blit the image
         self.screen.blit(self.image, self.rect)
-        self.screen.blit(self.n_serial_image, self.n_serial_rect)
+        
+        # Serial number only for player
+        if self.n_player == 0:
+            self.screen.blit(self.n_serial_image, self.n_serial_rect)
         
         # Circle base
         circleRad = self.width*0.45
@@ -153,10 +153,4 @@ class Block:
             xy_dest1 = (self.x     , scr_height-self.y)
             xy_dest2 = (self.x_dest, scr_height-self.y_dest)
             pygame.draw.line(self.screen, (100, 200, 100), xy_dest1, xy_dest2, 1)
-            
-            # Target line
-            xy_target1 = (self.x       , scr_height-self.y)
-            xy_target2 = (self.x_target, scr_height-self.y_target)
-            pygame.draw.line(self.screen, (200, 100, 100), xy_target1, xy_target2, 1)
-        
     

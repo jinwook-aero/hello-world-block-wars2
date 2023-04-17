@@ -9,13 +9,11 @@ class SettingGame:
         self.player_color = []
         
         # Player 1 green
-        self.player_color.append((100,200,100))
+        self.player_color.append((50,150,50))
         
         # Player 2 red
-        self.player_color.append((200,150,150))
-        
-        ## 
-        
+        self.player_color.append((150,50,50))
+                
         ## Flags
         # Game status
         self.is_active = False

@@ -46,13 +46,17 @@ class BlockWars2:
           
     def _set_game(self):
         block_turrets = []
-        N = 4
-        for n in range(N):
-            block_turret = BlockTurret(self, self.screen.get_width()*((n+1)/(N+1)), self.screen.get_height()*0.2,
-                                90, (0,100,0), 0, n+1)
-            block_turrets.append(block_turret)
-        for block_turret in block_turrets:
-            self.objs.add(block_turret)            
+        N_player = 2
+        N_serial = 4
+        for n_player in range(N_player):
+            for n_serial in range(N_serial):
+                x_cur = self.screen.get_width()*((n_serial+1)/(N_serial+1))
+                y_cur = self.screen.get_height()*(0.1+0.8*n_player)
+                c_cur = self.setting.game.player_color[n_player]
+                block_turret = BlockTurret(self, x_cur, y_cur, 90-180*n_player, c_cur, n_player, n_serial)
+                block_turrets.append(block_turret)
+            for block_turret in block_turrets:
+                self.objs.add(block_turret)
         
     def _check_events(self):
         # watch for keyboard and mouse events
@@ -126,13 +130,13 @@ class BlockWars2:
                     (event.key == pygame.K_3) or
                     (event.key == pygame.K_4)):
                     if (event.key == pygame.K_1):
-                        n_cur = 1
+                        n_cur = 1 - 1
                     elif (event.key == pygame.K_2):
-                        n_cur = 2
+                        n_cur = 2 - 1
                     elif (event.key == pygame.K_3):
-                        n_cur = 3
+                        n_cur = 3 - 1
                     elif (event.key == pygame.K_4):
-                        n_cur = 4
+                        n_cur = 4 - 1
                     for obj in self.objs.sprites():
                         if obj.is_selectable == True:
                             if obj.n_serial == n_cur:
@@ -151,8 +155,7 @@ class BlockWars2:
     def _update_game(self):
         # Object motions
         for obj in self.objs.sprites():
-            obj.update()
-        #self.objs.update()            
+            obj.update()     
                 
     def _update_screen(self):
         # Redraw screen
