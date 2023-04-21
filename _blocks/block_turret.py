@@ -109,6 +109,19 @@ class BlockTurret(Sprite):
         self.block.x_dest = self.x_dest
         self.block.y_dest = self.y_dest
         
+    def set_velocity(self,vx_new,vy_new):
+        self.vx       = vx_new
+        self.vy       = vy_new
+        self.block.vx = vx_new
+        self.block.vy = vy_new
+        self.block.v  = np.sqrt(np.square(vx_new) + np.square(vy_new))
+    
+    def set_position(self,x_new,y_new):
+        self.x       = x_new
+        self.y       = y_new
+        self.block.x = x_new
+        self.block.y = y_new
+        
     def draw(self):
         self.block.draw()
         self.turret.draw()

@@ -22,8 +22,8 @@ class BlockWars2:
                 (self.setting.screen.width,self.setting.screen.height))
         pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `, 1~4, W, A, S, D, Space")
         
-        self.block_turrets = pygame.sprite.Group()        
-        self.cannons = pygame.sprite.Group()
+        self.block_turrets = pygame.sprite.Group()
+        self.shells = pygame.sprite.Group()        
         
         
         # Start time
@@ -179,10 +179,43 @@ class BlockWars2:
                     block_turret.is_selected = False
             
     def _update_game(self):
-        # Object motions
+        # Collision between block-turrets
+        for b1 in self.block_turrets:
+            for b2 in self.block_turrets:
+                if b1 != b2:
+                    if pygame.sprite.collide_rect(b1,b2):
+                        # Position vector from 1 to 2
+                        dx = b2.x - b1.x
+                        dy = b2.y - b1.y
+                        nx = dx/np.sqrt(np.square(dx) + np.square(dy))
+                        ny = dy/np.sqrt(np.square(dx) + np.square(dy))         
+
+                        # Relative velocity of 2 from 1
+                        dvx = b2.vx - b1.vx
+                        dvy = b2.vy - b1.vy
+                        nvx = dvx/np.sqrt(np.square(dvx) + np.square(dvy))
+                        nvy = dvy/np.sqrt(np.square(dvx) + np.square(dvy))   
+                        
+                        # Is colliding further
+                        if (nx*nvx+ny*nvy)<0:
+                            # Colliding velocity substracted
+                            # Sign of b2 does not make sense
+                            # But only this setup works for a reason idk why
+                            b1.set_velocity(b1.vx*(1-nx), b1.vy*(1-ny))
+                            b2.set_velocity(b2.vx*(1-nx), b2.vy*(1-ny))
+                            
+                            # Rebounding to avoid diffusion into each other
+                            b1.set_position(b1.x - nx*b1.block.radius*0.03,
+                                            b1.y - ny*b1.block.radius*0.03)
+                        
+        # Collision with shells
+        collisions = pygame.sprite.groupcollide(
+                self.block_turrets, self.shells, True, True)
+            
+        # Block-turret motions
         for block_turret in self.block_turrets.sprites():
-            block_turret.update()     
-                
+            block_turret.update()
+            
     def _update_screen(self):
         # Redraw screen
         self.screen.fill(self.setting.screen.background_color)
@@ -196,3 +229,4 @@ if __name__ == '__main__':
     # Run the game
     bw = BlockWars2()
     bw.run_game()
+    

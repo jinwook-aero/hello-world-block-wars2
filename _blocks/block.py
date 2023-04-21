@@ -70,16 +70,16 @@ class Block:
         v_dot = self.setting.block.move_accel
         omega_dot = self.setting.block.rotate_accel
         
-        dist = np.sqrt(np.square(dx) + np.square(dy))
+        dist_stop = np.square(self.v)/(2*v_dot)+0.1*self.width
+        dist_cur  = np.sqrt(np.square(dx) + np.square(dy))
         
         # Accel
-        if dist>=self.width:
+        if dist_cur>=dist_stop:
             self.v = min(v0,self.v+v_dot)
             dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
         else:
             if self.v>0.2*v0:
-                v_dot2 = -np.square(self.v)/(2*dist)
-                self.v = max(0,self.v+v_dot2)
+                self.v = max(0,self.v-v_dot)
                 dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
             else:
                 self.v = 0
