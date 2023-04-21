@@ -64,13 +64,13 @@ class BlockTurret(Sprite):
         x_list = []
         y_list = []
         n_indx = 0
-        for obj in self.game.objs.sprites():
-            if (obj.n_player >= 0) and (obj.n_player != self.n_player):
+        for block_turret in self.game.block_turrets.sprites():
+            if (block_turret.n_player >= 0) and (block_turret.n_player != self.n_player):
                 n_indx += 1
-                d_cur = np.sqrt(np.square(obj.x-self.x)+np.square(obj.y-self.y))
+                d_cur = np.sqrt(np.square(block_turret.x-self.x)+np.square(block_turret.y-self.y))
                 d_list.append(d_cur)
-                x_list.append(obj.x)
-                y_list.append(obj.y)
+                x_list.append(block_turret.x)
+                y_list.append(block_turret.y)
         
         # Acquire target
         self.turret.x_target = self.block.x + np.cos(self.block.theta*np.pi/180)*self.block.radius*0.1
