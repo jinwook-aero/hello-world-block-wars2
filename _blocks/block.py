@@ -28,7 +28,7 @@ class Block:
         self.image.fill(self.color)
         
         self.image0 = self.image # Reserved original image
-        self.rect = self.image.get_rect(center = (int(self.x),self.setting.screen.height-self.y))
+        self.rect = self.image.get_rect(center = (int(self.x),self.setting.screen.height-int(self.y)))
         
         # Health
         self.health = self.setting.block.health

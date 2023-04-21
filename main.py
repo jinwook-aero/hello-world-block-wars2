@@ -9,6 +9,7 @@ sys.path.append('_blocks')
 
 from setting import Setting
 from block_turret import BlockTurret
+from shell import Shell
 
 class BlockWars2:
     """Overall class for game operation"""
@@ -207,12 +208,34 @@ class BlockWars2:
         # Block-turret motions
         for block_turret in self.block_turrets.sprites():
             block_turret.update()
+        
+        # Shell fired
+        for block_turret in self.block_turrets.sprites():
+            T = block_turret.turret
+            if T.fire_now:
+                shell = Shell(self, T)
+                self.shells.add(shell)
+            
+        # Shell vaninshed
+        for shell in self.shells.copy():
+            if shell.d_flight >= shell.R_range:
+                self.shells.remove(bullet)
+                
+        # Shell motions
+        for shell in self.shells.sprites():
+            shell.update()
             
     def _update_screen(self):
         # Redraw screen
         self.screen.fill(self.setting.screen.background_color)
+        
+        # Draw block-turrets
         for block_turret in self.block_turrets.sprites():
             block_turret.draw()
+            
+        # Draw shells
+        for shell in self.shells.sprites():
+            shell.draw()
 
         # Display screen
         pygame.display.flip()

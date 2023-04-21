@@ -2,12 +2,12 @@ import pygame
 import random
 import time
 import numpy as np
+import copy
 from pygame.sprite import Sprite
 
 class Shell(Sprite):
     """ Class to manage block """
-
-   def __init__(self, cur_game, turret, color, n_player, n_serial):
+    def __init__(self, cur_game, turret):
         # Initialize
         super().__init__()
         self.screen = cur_game.screen
@@ -16,31 +16,37 @@ class Shell(Sprite):
         self.game    = cur_game
         self.fps     = self.setting.game.frame_per_second
         
+        # Color from turret
+        new_clr    = [0, 0, 0]
+        turret_clr = turret.color
+        black_clr  = [0, 0, 0]
+        weight      = 0.1
+        for n_index in range(3):
+            new_clr[n_index] = turret_clr[n_index]*(1-weight)+black_clr[n_index]*weight
+        self.color = new_clr
+        
         # Original coordinates and attitude from turret
-        xBase = copy.copy(self.turret.xBase)
-        yBase = copy.copy(self.turret.xBase)
+        self.turret = turret
         
-        xMid = copy.copy(self.turret.xMid)
-        xMid = copy.copy(self.turret.xMid)
+        self.x0 = self.turret.xTip
+        self.y0 = self.turret.yTip
         
-        self.x0 = xBase + (xBase-xMid)*2
-        self.y0 = yBase + (yBase-yMid)*2
+        self.theta0 = copy.copy(self.turret.theta)
         
-        self.theta0 = copy.copy(turret.theta)
-        
-        # Current coordinate and flying distance
-        self.x = self.x0
-        self.y = self.y0
-        self.d = 0
+        # Current coordinate, attitude, and flying distance
+        self.x        = self.x0
+        self.y        = self.y0
+        self.theta    = self.theta0
+        self.d_flight = 0
                 
         # Create rectangle
         self.width  = self.setting.shell.width
         self.height = self.setting.shell.height
         self.image  = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.image.fill(color)
+        self.image.fill(self.color)
         
         self.image0 = self.image # Reserved original image
-        self.rect = self.image.get_rect(center = (int(self.xMid),self.setting.screen.height-self.yMid-self.height/2))
+        self.rect = self.image.get_rect(center = (int(self.x),self.setting.screen.height-int(self.y)-self.height/2))
         
         # Speed
         self.v0 = self.setting.shell.move_speed
@@ -50,9 +56,9 @@ class Shell(Sprite):
         # Ranges
         self.R_range = cur_game.setting.turret.R_range;
 
-        # Serial number
-        self.n_player = n_player
-        self.n_serial = n_serial
+        # Serial number from turret
+        self.n_player = turret.n_player
+        self.n_serial = turret.n_serial
         
     def update(self):
         # Fly

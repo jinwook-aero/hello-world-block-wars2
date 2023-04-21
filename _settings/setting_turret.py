@@ -14,4 +14,3 @@ class SettingTurret:
         self.dt_reload = 300 # frame
 
 
-

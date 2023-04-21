@@ -27,16 +27,20 @@ class Turret:
         self.xMid  = copy.copy(self.xBase)
         self.yMid  = copy.copy(self.yBase)
         
+        self.xTip  = copy.copy(self.xBase)
+        self.yTip  = copy.copy(self.yBase)
+        
         # Attitude and target copied from block
         self.theta    = copy.copy(block.theta)
         self.x_target = copy.copy(block.x)
         self.y_target = copy.copy(block.y)
         
         # Create rectangle
+        self.color  = color
         self.width  = self.setting.turret.width
         self.height = self.setting.turret.height
         self.image  = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.image.fill(color)
+        self.image.fill(self.color)
         
         self.image0 = self.image # Reserved original image
         self.rect = self.image.get_rect(center = (int(self.xMid),self.setting.screen.height-self.yMid-self.height/2))
@@ -57,6 +61,7 @@ class Turret:
         # Firing
         self.is_aligned = False
         self.is_firing = False
+        self.fire_now  = False
         self.t_last    = 0
         self.dt_reload = self.setting.turret.dt_reload
         self.dt_left   = 0
@@ -114,6 +119,9 @@ class Turret:
         self.xMid = self.xBase + np.cos(self.theta*np.pi/180)*self.height*0.5
         self.yMid = self.yBase + np.sin(self.theta*np.pi/180)*self.height*0.5
         
+        self.xTip = self.xBase + np.cos(self.theta*np.pi/180)*self.height*1.0
+        self.yTip = self.yBase + np.sin(self.theta*np.pi/180)*self.height*1.0
+        
         rect_x = int(self.xMid)
         rect_y = self.setting.screen.height - int(self.yMid)
         
@@ -125,11 +133,13 @@ class Turret:
         
         # Firing counter
         t_cur = self.game.n_frame
+        self.fire_now = False
         if self.is_firing:
             # Trigger when ready
             if (t_cur>=self.t_last + self.dt_reload): # Fire now
                 self.t_last  = t_cur
                 self.dt_left = self.dt_reload
+                self.fire_now = True
             else:
                 self.dt_left = self.dt_reload - (t_cur - self.t_last)
         else:
