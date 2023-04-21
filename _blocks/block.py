@@ -62,7 +62,7 @@ class Block:
         
         self.text_serial_color = (255, 255, 255)
         self.text_health_color = (50, 255, 50)
-        self.font = pygame.font.SysFont(None, 24)
+        self.font = pygame.font.SysFont(None, 20)
                 
     def update(self):
         # Accel toward destination

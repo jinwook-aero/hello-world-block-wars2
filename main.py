@@ -21,7 +21,7 @@ class BlockWars2:
         
         self.screen = pygame.display.set_mode(
                 (self.setting.screen.width,self.setting.screen.height))
-        pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `, 1~4, W, A, S, D, Space")
+        pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `, 1~0, W, A, S, D, Space, ESC")
         
         self.block_turrets = pygame.sprite.Group()
         self.shells = pygame.sprite.Group()        
@@ -51,7 +51,7 @@ class BlockWars2:
     def _set_game(self):
         block_turrets = []
         N_player = 2
-        N_serial = 4
+        N_serial = 8
         for n_player in range(N_player):
             for n_serial in range(N_serial):
                 x_cur = self.screen.get_width()*((n_serial+1)/(N_serial+1))
@@ -107,7 +107,7 @@ class BlockWars2:
             elif (event.type == pygame.KEYDOWN):
                 # REF: https://www.pygame.org/docs/ref/key.html#pygame.key.name
                 # Quit
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_ESCAPE:
                     sys.exit()
                     
                 # Select/Deselect all
@@ -137,7 +137,13 @@ class BlockWars2:
                 if ((event.key == pygame.K_1) or
                     (event.key == pygame.K_2) or
                     (event.key == pygame.K_3) or
-                    (event.key == pygame.K_4)):
+                    (event.key == pygame.K_4) or
+                    (event.key == pygame.K_5) or
+                    (event.key == pygame.K_6) or
+                    (event.key == pygame.K_7) or
+                    (event.key == pygame.K_8) or
+                    (event.key == pygame.K_9) or
+                    (event.key == pygame.K_0)):
                     if (event.key == pygame.K_1):
                         n_cur = 1 - 1
                     elif (event.key == pygame.K_2):
@@ -146,6 +152,18 @@ class BlockWars2:
                         n_cur = 3 - 1
                     elif (event.key == pygame.K_4):
                         n_cur = 4 - 1
+                    elif (event.key == pygame.K_5):
+                        n_cur = 5 - 1
+                    elif (event.key == pygame.K_6):
+                        n_cur = 6 - 1
+                    elif (event.key == pygame.K_7):
+                        n_cur = 7 - 1
+                    elif (event.key == pygame.K_8):
+                        n_cur = 8 - 1
+                    elif (event.key == pygame.K_9):
+                        n_cur = 9 - 1
+                    elif (event.key == pygame.K_0):
+                        n_cur = 10 - 1
                         
                     # Check if already selected
                     is_selected_already = False
@@ -159,6 +177,40 @@ class BlockWars2:
                     for block_turret in self.block_turrets.sprites():
                         if block_turret.is_selectable == True:
                             if block_turret.n_serial == n_cur:
+                                block_turret.is_selected = not is_selected_already
+                            else:
+                                block_turret.is_selected = False
+                
+                # Select/Deselect group
+                if ((event.key == pygame.K_F1) or
+                    (event.key == pygame.K_F2) or
+                    (event.key == pygame.K_F3) or
+                    (event.key == pygame.K_F4)):
+                    if (event.key == pygame.K_F1):
+                        n_min = 1 - 1
+                        n_max = 2 - 1
+                    elif (event.key == pygame.K_F2):
+                        n_min = 3 - 1
+                        n_max = 4 - 1
+                    elif (event.key == pygame.K_F3):
+                        n_min = 5 - 1
+                        n_max = 6 - 1
+                    elif (event.key == pygame.K_F4):
+                        n_min = 7 - 1
+                        n_max = 8 - 1
+                        
+                    # Check if already selected
+                    is_selected_already = False
+                    for block_turret in self.block_turrets.sprites():
+                        if block_turret.is_selectable == True:
+                            if (block_turret.n_serial >= n_min) and (block_turret.n_serial <= n_max):
+                                if block_turret.is_selected:
+                                    is_selected_already = True
+                    
+                    # Flip selection at target and delect else
+                    for block_turret in self.block_turrets.sprites():
+                        if block_turret.is_selectable == True:
+                            if (block_turret.n_serial >= n_min) and (block_turret.n_serial <= n_max):
                                 block_turret.is_selected = not is_selected_already
                             else:
                                 block_turret.is_selected = False
@@ -198,8 +250,8 @@ class BlockWars2:
                             b2.set_velocity(b2.vx*(1-nx), b2.vy*(1-ny))
                             
                             # Rebounding to avoid diffusion into each other
-                            b1.set_position(b1.x - nx*b1.block.radius*0.03,
-                                            b1.y - ny*b1.block.radius*0.03)
+                            b1.set_position(b1.x - nx*b1.block.radius*0.04,
+                                            b1.y - ny*b1.block.radius*0.04)
                         
         # Collision with shells
         for bt in self.block_turrets:
