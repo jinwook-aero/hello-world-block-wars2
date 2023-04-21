@@ -202,9 +202,22 @@ class BlockWars2:
                                             b1.y - ny*b1.block.radius*0.03)
                         
         # Collision with shells
-        collisions = pygame.sprite.groupcollide(
-                self.block_turrets, self.shells, True, True)
+        for bt in self.block_turrets:
+            for sh in self.shells:
+                if pygame.sprite.collide_rect(bt,sh):
+                    bt.set_damage(sh.damage)
+                    sh.set_damage(sh.damage)
             
+        # Block destroyed
+        for block_turret in self.block_turrets.copy():
+            if block_turret.health <= 0:
+                self.block_turrets.remove(block_turret)
+                
+        # Shell destroyed
+        for shell in self.shells.copy():
+            if shell.health <= 0:
+                self.shells.remove(shell)
+                
         # Block-turret motions
         for block_turret in self.block_turrets.sprites():
             block_turret.update()
@@ -219,7 +232,7 @@ class BlockWars2:
         # Shell vaninshed
         for shell in self.shells.copy():
             if shell.d_flight >= shell.R_range:
-                self.shells.remove(bullet)
+                self.shells.remove(shell)
                 
         # Shell motions
         for shell in self.shells.sprites():

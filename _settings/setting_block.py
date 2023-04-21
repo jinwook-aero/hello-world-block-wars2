@@ -11,6 +11,6 @@ class SettingBlock:
         self.height = 25 # pixel
         self.width = 20 # pixel
         
-        self.health = 5
+        self.health = 2
 
 

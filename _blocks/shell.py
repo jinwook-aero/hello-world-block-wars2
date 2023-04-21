@@ -15,14 +15,16 @@ class Shell(Sprite):
         self.setting = cur_game.setting
         self.game    = cur_game
         self.fps     = self.setting.game.frame_per_second
+        self.damage  = self.setting.shell.damage
+        self.health  = self.setting.shell.health
         
         # Color from turret
         new_clr    = [0, 0, 0]
         turret_clr = turret.color
-        black_clr  = [0, 0, 0]
-        weight      = 0.1
+        mix_clr    = [150, 150, 150]
+        weight     = 0.4
         for n_index in range(3):
-            new_clr[n_index] = turret_clr[n_index]*(1-weight)+black_clr[n_index]*weight
+            new_clr[n_index] = turret_clr[n_index]*(1-weight)+mix_clr[n_index]*weight
         self.color = new_clr
         
         # Original coordinates and attitude from turret
@@ -68,7 +70,7 @@ class Shell(Sprite):
         # Update distance
         dx = self.x - self.x0
         dy = self.y - self.y0
-        self.d = np.sqrt(np.square(dx) + np.square(dy))
+        self.d_flight = np.sqrt(np.square(dx) + np.square(dy))
         
         # Update rect
         rect_x = int(self.x)
@@ -83,3 +85,6 @@ class Shell(Sprite):
     def draw(self):            
         # Blit the image
         self.screen.blit(self.image, self.rect)
+        
+    def set_damage(self,damage):
+        self.health -= damage

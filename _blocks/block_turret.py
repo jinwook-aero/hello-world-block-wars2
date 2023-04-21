@@ -35,6 +35,9 @@ class BlockTurret(Sprite):
         self.vx = 0
         self.vy = 0
         
+        # Health
+        self.health = self.block.health
+        
         # Ranges
         T_SET = cur_game.setting.turret
         self.R_recog = T_SET.R_recog;
@@ -91,12 +94,13 @@ class BlockTurret(Sprite):
         self.block.update()
         self.turret.update()
         
-        # Merge back to block_turret
-        self.x     = self.block.x
-        self.y     = self.block.y
-        self.vx    = self.block.vx
-        self.vy    = self.block.vy
-        self.rect  = self.block.rect
+        # Merge back to block-turret
+        self.x      = self.block.x
+        self.y      = self.block.y
+        self.vx     = self.block.vx
+        self.vy     = self.block.vy
+        self.rect   = self.block.rect
+        self.health = self.block.health
         
         # Selected
         self.block.is_selected  = self.is_selected
@@ -121,6 +125,10 @@ class BlockTurret(Sprite):
         self.y       = y_new
         self.block.x = x_new
         self.block.y = y_new
+        
+    def set_damage(self,damage):
+        self.health       -= damage
+        self.block.health -= damage
         
     def draw(self):
         self.block.draw()
