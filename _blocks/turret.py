@@ -5,7 +5,6 @@ import numpy as np
 import copy
 from pygame.sprite import Sprite
 
-#class Turret(Sprite):
 class Turret:
     """ Class to manage turret """
 

@@ -92,11 +92,11 @@ class BlockTurret(Sprite):
         self.turret.update()
         
         # Merge back to block_turret
-        self.x    = self.block.x
-        self.y    = self.block.y
-        self.vx   = self.block.vx
-        self.vy   = self.block.vy
-        self.rect = self.block.rect
+        self.x     = self.block.x
+        self.y     = self.block.y
+        self.vx    = self.block.vx
+        self.vy    = self.block.vy
+        self.rect  = self.block.rect
         
         # Selected
         self.block.is_selected  = self.is_selected

@@ -1,5 +1,5 @@
-class SettingBullet:
-    """ A class to store bullet settings """
+class SettingShell:
+    """ A class to store shell settings """
 
     def __init__(self):
         self.move_speed = 60 # pixel/frame

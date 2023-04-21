@@ -61,7 +61,7 @@ class BlockWars2:
             for block_turret in block_turrets:
                 self.block_turrets.add(block_turret)
         
-    def _check_events(self):
+    def _check_events(self):        
         # watch for keyboard and mouse events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -81,6 +81,26 @@ class BlockWars2:
                     if block_turret.is_selected == True:
                         block_turret.x_dest = mouse_x
                         block_turret.y_dest = mouse_y                     
+            
+            # Keys kept-pressed
+            IS_W = pygame.key.get_pressed()[pygame.K_w]
+            IS_A = pygame.key.get_pressed()[pygame.K_a]
+            IS_S = pygame.key.get_pressed()[pygame.K_s]
+            IS_D = pygame.key.get_pressed()[pygame.K_d]
+            
+            if IS_W or IS_A or IS_S or IS_D:
+                for block_turret in self.block_turrets.sprites():
+                    if block_turret.is_selected == True:
+                        block_turret.x_dest = block_turret.x
+                        block_turret.y_dest = block_turret.y
+                        if IS_W:
+                            block_turret.y_dest = block_turret.y + self.screen.get_height()
+                        if IS_A:
+                            block_turret.x_dest = block_turret.x - self.screen.get_width()
+                        if IS_S:
+                            block_turret.y_dest = block_turret.y - self.screen.get_height()
+                        if IS_D:
+                            block_turret.x_dest = block_turret.x + self.screen.get_width()
                     
             # Key down
             elif (event.type == pygame.KEYDOWN):
@@ -103,26 +123,14 @@ class BlockWars2:
                             else:
                                 block_turret.is_selected = True
                                     
-                # Control start
-                if ((event.key == pygame.K_w) or
-                    (event.key == pygame.K_a) or
-                    (event.key == pygame.K_s) or
-                    (event.key == pygame.K_d) or
-                    (event.key == pygame.K_SPACE)):
-                    
+                # Stop blocks
+                if (event.key == pygame.K_SPACE):
                     for block_turret in self.block_turrets.sprites():
-                        if block_turret.is_selectable and block_turret.is_selected:
-                            if (event.key == pygame.K_w):
-                                block_turret.y_dest = block_turret.y + self.screen.get_height()
-                            if (event.key == pygame.K_a):
-                                block_turret.x_dest = block_turret.x - self.screen.get_width()
-                            if (event.key == pygame.K_s):
-                                block_turret.y_dest = block_turret.y - self.screen.get_height()
-                            if (event.key == pygame.K_d):
-                                block_turret.x_dest = block_turret.x + self.screen.get_width()
-                            elif (event.key == pygame.K_SPACE):
-                                block_turret.x_dest = block_turret.x+block_turret.vx*self.setting.game.frame_per_second*0.5
-                                block_turret.y_dest = block_turret.y+block_turret.vy*self.setting.game.frame_per_second*0.5
+                        if block_turret.is_selected == True:
+                            t_scale = self.setting.block.move_speed/self.setting.block.move_accel*0.5
+                            block_turret.block.omega = 0
+                            block_turret.x_dest = block_turret.x + block_turret.vx*t_scale
+                            block_turret.y_dest = block_turret.y + block_turret.vy*t_scale
                 
                 # Select/Deselect each
                 if ((event.key == pygame.K_1) or
@@ -153,23 +161,7 @@ class BlockWars2:
                                 block_turret.is_selected = not is_selected_already
                             else:
                                 block_turret.is_selected = False
-                                
-            # Key up
-            elif (event.type == pygame.KEYUP):   
-                # Control end
-                if ((event.key == pygame.K_w) or
-                    (event.key == pygame.K_a) or
-                    (event.key == pygame.K_s) or
-                    (event.key == pygame.K_d) or
-                    (event.key == pygame.K_SPACE)):
-                    
-                    for block_turret in self.block_turrets.sprites():
-                        if block_turret.is_selectable and block_turret.is_selected:
-                            if (event.key == pygame.K_w) or (event.key == pygame.K_s):
-                                block_turret.y_dest = block_turret.y
-                            if (event.key == pygame.K_a) or (event.key == pygame.K_d):
-                                block_turret.x_dest = block_turret.x
-    
+                            
     def _select_block(self,mouse_pos):
         for block_turret in self.block_turrets.sprites():
             if block_turret.is_selectable == True:

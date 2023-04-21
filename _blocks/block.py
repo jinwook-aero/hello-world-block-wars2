@@ -4,7 +4,6 @@ import time
 import numpy as np
 from pygame.sprite import Sprite
 
-#class Block(Sprite):
 class Block:
     """ Class to manage block """
 
@@ -34,11 +33,17 @@ class Block:
         # Health
         self.health = self.setting.block.health
         
-        # Speed
+        # Speed        
+        self.v0 = self.setting.block.move_speed
+        self.omega0 = self.setting.block.rotate_speed     
+        
         self.v     = 0
         self.vx    = 0
         self.vy    = 0
-        self.omega = 0
+        
+        # Accel
+        self.v_dot = self.setting.block.move_accel
+        self.omega_dot = self.setting.block.rotate_accel
         
         # Destiation
         self.x_dest = self.x
@@ -62,24 +67,18 @@ class Block:
     def update(self):
         # Accel toward destination
         dx = self.x_dest - self.x
-        dy = self.y_dest - self.y        
+        dy = self.y_dest - self.y
         
-        v0 = self.setting.block.move_speed
-        omega0 = self.setting.block.rotate_speed
-        
-        v_dot = self.setting.block.move_accel
-        omega_dot = self.setting.block.rotate_accel
-        
-        dist_stop = np.square(self.v)/(2*v_dot)+0.1*self.width
+        dist_stop = np.square(self.v)/(2*self.v_dot)+0.1*self.width
         dist_cur  = np.sqrt(np.square(dx) + np.square(dy))
         
         # Accel
         if dist_cur>=dist_stop:
-            self.v = min(v0,self.v+v_dot)
+            self.v = min(self.v0,self.v+self.v_dot)
             dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
         else:
-            if self.v>0.2*v0:
-                self.v = max(0,self.v-v_dot)
+            if self.v>0.2*self.v0:
+                self.v = max(0,self.v-self.v_dot)
                 dtheta = np.arctan2(dy,dx)*180/np.pi - self.theta
             else:
                 self.v = 0
@@ -87,9 +86,9 @@ class Block:
         
         dtheta %= 360            
         if dtheta>=1 and dtheta<=180:
-            self.omega = min( omega0, self.omega + omega_dot)
+            self.omega = min( self.omega0, self.omega + self.omega_dot)
         elif dtheta>180 and dtheta<360-1:
-            self.omega = max(-omega0, self.omega - omega_dot)
+            self.omega = max(-self.omega0, self.omega - self.omega_dot)
         else:
             self.omega = 0
         
