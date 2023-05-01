@@ -136,7 +136,7 @@ class Block:
         self.n_serial_rect.y = self.rect.y - self.height*0.5
         
         self.health_rect   = self.health_image.get_rect()
-        self.health_rect.x = self.rect.x + self.width*1.5
+        self.health_rect.x = self.rect.x + self.width*1.2
         self.health_rect.y = self.rect.y - self.height*0.5
         
     def draw(self):
