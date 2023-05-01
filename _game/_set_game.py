@@ -1,9 +1,7 @@
 from block_turret import BlockTurret
 
-def _set_game(self):
+def _set_game(self,N_player,N_serial):
     block_turrets = []
-    N_player = 2
-    N_serial = 8
     for n_player in range(N_player):
         for n_serial in range(N_serial):
             x_cur = self.screen.get_width()*((n_serial+1)/(N_serial+1))

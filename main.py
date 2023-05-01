@@ -28,6 +28,7 @@ class BlockWars2:
          
     # Import game methods
     from _check_events import _check_events
+    from _random_enemy import _random_enemy
     from _select_block import _select_block
     from _set_game import _set_game
     from _update_game import _update_game
@@ -35,7 +36,7 @@ class BlockWars2:
    
     def run_game(self):
         """Main game loop"""
-        self._set_game()
+        self._set_game(self.setting.game.N_player,self.setting.game.N_serial)
         while True:            
             # Update inputs
             self._check_events()
@@ -46,9 +47,12 @@ class BlockWars2:
             # Update screen
             self._update_screen()
             
+            # Update random enemy movement
+            self._random_enemy() 
+            
             # Frame rate
             self.n_frame += 1
-            self.clock.tick(self.setting.game.frame_per_second)        
+            self.clock.tick(self.setting.game.frame_per_second)
         
 if __name__ == '__main__':
     # Run the game

@@ -8,6 +8,10 @@ class SettingGame:
         ## Player colors
         self.player_color = []
         
+        # Counts
+        self.N_player = 2
+        self.N_serial = 6
+        
         # Player 1 green
         self.player_color.append((50,150,50))
         
