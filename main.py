@@ -21,11 +21,10 @@ class BlockWars2:
         
         self.screen = pygame.display.set_mode(
                 (self.setting.screen.width,self.setting.screen.height))
-        pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `, 1~0, W, A, S, D, Space, ESC")
+        pygame.display.set_caption("Block Wars 2: Mouse Left/Right, `/1~8/F1~F4, W/A/S/D/Space, ESC")
         
         self.block_turrets = pygame.sprite.Group()
-        self.shells = pygame.sprite.Group()        
-        
+        self.shells = pygame.sprite.Group()
         
         # Start time
         self.clock = pygame.time.Clock()
@@ -78,10 +77,29 @@ class BlockWars2:
                 mouse_pos = pygame.mouse.get_pos()
                 mouse_x = mouse_pos[0]
                 mouse_y = self.screen.get_height() - mouse_pos[1]
+                
+                sum_x = 0
+                sum_y = 0
+                count_n = 0
                 for block_turret in self.block_turrets.sprites():
                     if block_turret.is_selected == True:
-                        block_turret.x_dest = mouse_x
-                        block_turret.y_dest = mouse_y                     
+                        count_n += 1
+                        sum_x += block_turret.x
+                        sum_y += block_turret.y
+                if count_n > 0:
+                    avg_x = sum_x/count_n
+                    avg_y = sum_y/count_n
+                else:
+                    avg_x = 0
+                    avg_y = 0
+                        
+                for block_turret in self.block_turrets.sprites():
+                    if block_turret.is_selected == True:
+                        cur_dx = block_turret.x - avg_x
+                        cur_dy = block_turret.y - avg_y
+                        
+                        block_turret.x_dest = cur_dx + mouse_x
+                        block_turret.y_dest = cur_dy + mouse_y
             
             # Keys kept-pressed
             IS_W = pygame.key.get_pressed()[pygame.K_w]
